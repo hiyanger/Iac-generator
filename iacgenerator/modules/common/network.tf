@@ -3,7 +3,7 @@ variable "name" {
     type = string
 }
 
-# amazonqというVPCを作成する。CIDRを設定する。nameタグにnameを設定する。
+# iacgeneratorというVPCを作成する。CIDRを設定する。nameタグにnameを設定する。
 resource "aws_vpc" "iacgenerator" {
     cidr_block = "10.0.0.0/16"
     tags = {
@@ -11,7 +11,7 @@ resource "aws_vpc" "iacgenerator" {
     }
 }
 
-# amazonqというVPCにインターネットゲートウェイを作成する。nameタグにnameを設定する。
+# iacgeneratorというVPCにインターネットゲートウェイを作成する。nameタグにnameを設定する。
 resource "aws_internet_gateway" "iacgenerator" {
     vpc_id = aws_vpc.iacgenerator.id
     tags = {
@@ -19,7 +19,7 @@ resource "aws_internet_gateway" "iacgenerator" {
     }
 }
 
-# amazonqというVPCにサブネットを作成する。nameタグにnameを設定する。
+# iacgeneratorというVPCにサブネットを作成する。nameタグにnameを設定する。
 resource "aws_subnet" "iacgenerator" {
     vpc_id = aws_vpc.iacgenerator.id
     cidr_block = "10.0.1.0/24"

@@ -3,7 +3,7 @@ provider "aws" {
     region = "ap-northeast-1"
 }
 
-# amazonq0628というバケット名のS3にtfstateを配置する
+# iacgenerator0628というバケット名のS3にtfstateを配置する
 terraform {
     backend "s3" {
         bucket = "XXXX" # 補完する
@@ -12,7 +12,7 @@ terraform {
     }
 }
 
-# 変数nameにdefault値でamazonqを格納する。型も設定する。
+# 変数nameにdefault値でiacgeneratorを格納する。型も設定する。
 variable "name" {
     type = string
     default = "iacgenerator"
@@ -24,7 +24,7 @@ module "common" {
     name = var.name
 }
 
-# amazonqというセキュリティグループを作成する。SSHを許可する。タグに変数nameを設定する。VPCをmodulesから取得する。
+# iacgeneratorというセキュリティグループを作成する。SSHを許可する。タグに変数nameを設定する。VPCをmodulesから取得する。
 resource "aws_security_group" "iacgenerator" {
     name = var.name
     vpc_id = module.common.vpc_id
@@ -39,7 +39,7 @@ resource "aws_security_group" "iacgenerator" {
     }
 }
 
-# amazonqというEC2作成する。amazonqというセキュリティグループに紐づける。パブリックIPを付与する。amazonqというキーペアを使う。Nameタグを変数nameにする。
+# iacgeneratorというEC2作成する。iacgeneratorというセキュリティグループに紐づける。パブリックIPを付与する。iacgeneratorというキーペアを使う。Nameタグを変数nameにする。
 resource "aws_instance" "iacgenerator" {
     instance_type = "t2.micro"
     ami = "ami-061a125c7c02edb39"
