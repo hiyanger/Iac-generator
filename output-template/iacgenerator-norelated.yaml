@@ -1,0 +1,157 @@
+Metadata:
+  TemplateId: arn:aws:cloudformation:ap-northeast-1:XXXX:generatedTemplate/XXXX
+Resources:
+  EC2InternetGatewayXXXX:
+    UpdateReplacePolicy: Delete
+    Type: AWS::EC2::InternetGateway
+    DeletionPolicy: Delete
+    Properties:
+      Tags:
+        - Value: iacgenerator
+          Key: Name
+
+  EC2VPCX:
+    UpdateReplacePolicy: Delete
+    Type: AWS::EC2::VPC
+    DeletionPolicy: Delete
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      InstanceTenancy: default
+      EnableDnsHostnames: false
+      Tags:
+        - Value: iacgenerator
+          Key: Name
+
+  EC2RouteTableXXXX:
+    UpdateReplacePolicy: Delete
+    Type: AWS::EC2::RouteTable
+    DeletionPolicy: Delete
+    Properties:
+      VpcId: !Ref EC2VPCXXXX
+      Tags:
+        - Value: iacgenerator
+          Key: Name
+
+  EC2InstanceXXXX:
+    UpdateReplacePolicy: Delete
+    Type: AWS::EC2::Instance
+    DeletionPolicy: Delete
+    Properties:
+      Tenancy: default
+      # SecurityGroups:
+      # - "iacgenerator"
+      # PrivateIpAddress: "10.0.1.167"
+      InstanceInitiatedShutdownBehavior: stop
+      # CpuOptions:
+      #   ThreadsPerCore: 1
+      #   CoreCount: 1
+      BlockDeviceMappings:
+        - Ebs:
+            SnapshotId: snap-XXXX
+            VolumeType: gp3
+            Iops: 3000
+            VolumeSize: 8
+            Encrypted: false
+            DeleteOnTermination: true
+          DeviceName: /dev/xvda
+      AvailabilityZone: ap-northeast-1d
+      PrivateDnsNameOptions:
+        EnableResourceNameDnsARecord: false
+        HostnameType: ip-name
+        EnableResourceNameDnsAAAARecord: false
+      # SubnetId:
+      #   Ref: "EC2SubnetXXXX"
+      # SecurityGroupIds:
+      # - "sg-0f149797ffcb0c568"
+      EbsOptimized: false
+      DisableApiTermination: false
+      KeyName: iacgenerator
+      SourceDestCheck: true
+      # Volumes:
+      # - VolumeId: "vol-XXXX"
+      #   Device: "/dev/xvda"
+      PlacementGroupName: ''
+      VpcId: vpc-0373437c4f65175bf
+      State:
+        Code: '16'
+        Name: running
+      NetworkInterfaces:
+        - PrivateIpAddresses:
+            - PrivateIpAddress: 10.0.1.167
+              Primary: true
+          SecondaryPrivateIpAddressCount: 0
+          DeviceIndex: '0'
+          GroupSet:
+            - !Ref EC2SecurityGroupXXXX
+          Ipv6Addresses: []
+          SubnetId: !Ref EC2SubnetXXXX
+          AssociatePublicIpAddress: true
+          # NetworkInterfaceId: "eni-XXXX"
+          DeleteOnTermination: true
+      ImageId: ami-XXXX
+      InstanceType: t2.micro
+      Monitoring: false
+      Tags:
+        - Value: iacgenerator
+          Key: Name
+      CreditSpecification:
+        CPUCredits: standard
+
+  EC2SubnetXXXX:
+    UpdateReplacePolicy: Delete
+    Type: AWS::EC2::Subnet
+    DeletionPolicy: Delete
+    Properties:
+      VpcId: !Ref EC2VPCXXXX
+      MapPublicIpOnLaunch: false
+      EnableDns64: false
+      AvailabilityZoneId: apne1-az2
+      PrivateDnsNameOptionsOnLaunch:
+        EnableResourceNameDnsARecord: false
+        HostnameType: ip-name
+        EnableResourceNameDnsAAAARecord: false
+      CidrBlock: 10.0.1.0/24
+      Ipv6Native: false
+      Tags:
+        - Value: iacgenerator
+          Key: Name
+
+  EC2SecurityGroupXXXX:
+    UpdateReplacePolicy: Delete
+    Type: AWS::EC2::SecurityGroup
+    DeletionPolicy: Delete
+    Properties:
+      GroupDescription: Managed by Terraform
+      GroupName: iacgenerator
+      VpcId: !Ref EC2VPCXXXX
+      SecurityGroupIngress:
+        - CidrIp: XXX.XXX.XXX.XXX/32
+          IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+      Tags:
+        - Value: iacgenerator
+          Key: Name
+
+  # IGWをVPCにアタッチ
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref EC2VPCXXXX
+      InternetGatewayId: !Ref EC2InternetGatewayXXXX
+
+  # サブネットとルートテーブルを紐付け
+  AssoPubSubRT:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref EC2SubnetXXXX
+      RouteTableId: !Ref EC2RouteTableXXXX
+
+  # PubSub-インターネット間のルーティング
+  PubSubfToInternet:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref EC2RouteTableXXXX
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref EC2InternetGatewayXXXX

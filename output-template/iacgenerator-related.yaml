@@ -1,0 +1,328 @@
+Metadata:
+  TemplateId: "arn:aws:cloudformation:ap-northeast-1:XXXX:generatedTemplate/XXXX"
+Resources:
+  EC2InstanceXXXX:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Instance"
+    DeletionPolicy: "Delete"
+    Properties:
+      Tenancy: "default"
+      # SecurityGroups:
+      # - "iacgenerator"
+      # PrivateIpAddress: "10.0.1.167"
+      InstanceInitiatedShutdownBehavior: "stop"
+      # CpuOptions:
+      #  ThreadsPerCore: 1
+      #  CoreCount: 1
+      BlockDeviceMappings:
+      - Ebs:
+          SnapshotId: "snap-XXXX"
+          VolumeType: "gp3"
+          Iops: 3000
+          VolumeSize: 8
+          Encrypted: false
+          DeleteOnTermination: true
+        DeviceName: "/dev/xvda"
+      AvailabilityZone: "ap-northeast-1d"
+      PrivateDnsNameOptions:
+        EnableResourceNameDnsARecord: false
+        HostnameType: "ip-name"
+        EnableResourceNameDnsAAAARecord: false
+      # SubnetId:
+      #  Ref: "EC2SubnetXXXX"
+      # SecurityGroupIds:
+      # - "sg-XXXX"
+      EbsOptimized: false
+      DisableApiTermination: false
+      KeyName: "iacgenerator"
+      SourceDestCheck: true
+      # Volumes:
+      # - VolumeId: "vol-XXXX"
+      #   Device: "/dev/xvda"
+      PlacementGroupName: ""
+      VpcId: "vpc-XXXX"
+      State:
+        Code: "16"
+        Name: "running"
+      NetworkInterfaces:
+      - PrivateIpAddresses:
+        - PrivateIpAddress: "10.0.1.167"
+          Primary: true
+        SecondaryPrivateIpAddressCount: 0
+        DeviceIndex: "0"
+        GroupSet:
+        - Ref: "EC2SecurityGroupXXXX"
+        Ipv6Addresses: []
+        SubnetId:
+          Ref: "EC2SubnetXXXX"
+        AssociatePublicIpAddress: true
+        # NetworkInterfaceId:
+        #  Ref: "EC2NetworkInterfaceXXXX"
+        DeleteOnTermination: true
+      ImageId: "ami-XXXX"
+      InstanceType: "t2.micro"
+      Monitoring: false
+      Tags:
+      - Value: "iacgenerator"
+        Key: "Name"
+      CreditSpecification:
+        CPUCredits: "standard"
+
+  # EC2SubnetNetworkAclAssociationXXXX:
+  #   UpdateReplacePolicy: "Delete"
+  #   Type: "AWS::EC2::SubnetNetworkAclAssociation"
+  #   DeletionPolicy: "Delete"
+  #   Properties:
+  #     NetworkAclId:
+  #       Ref: "EC2NetworkAclXXXX"
+  #     SubnetId:
+  #       Ref: "EC2SubnetXXXX"
+
+  EC2RouteTableXXXX:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::RouteTable"
+    DeletionPolicy: "Delete"
+    Properties:
+      VpcId:
+        Ref: "EC2VPCXXXX"
+
+  # EC2VolumeAttachmentXXXX:
+  #  UpdateReplacePolicy: "Delete"
+  #  Type: "AWS::EC2::VolumeAttachment"
+  #  DeletionPolicy: "Delete"
+  #  Properties:
+  #   InstanceId: "i-XXXX"
+  #   VolumeId: "vol-XXXX"
+  #   Device: "/dev/xvda"
+
+  EC2InternetGatewayXXXX:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::InternetGateway"
+    DeletionPolicy: "Delete"
+    Properties:
+      Tags:
+      - Value: "iacgenerator"
+        Key: "Name"
+
+  EC2RouteXXXX:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Route"
+    DeletionPolicy: "Delete"
+    Properties:
+      RouteTableId:
+        Ref: "EC2RouteTableXXXX"
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId:
+        Ref: "EC2InternetGatewayXXXX"
+      # VpcEndpointId: "igw-XXXX"
+
+  # EC2RouteXXXX:
+  #  UpdateReplacePolicy: "Delete"
+  #  Type: "AWS::EC2::Route"
+  #  DeletionPolicy: "Delete"
+  #  Properties:
+  #   RouteTableId:
+  #    Ref: "EC2RouteTableXXXX"
+  #   DestinationCidrBlock:
+  #    Fn::GetAtt:
+  #    - "EC2VPCXXXX"
+  #    - "CidrBlock"
+  #   GatewayId: "local"
+  #   VpcEndpointId: "local"
+
+  # EC2RouteXXXX:
+  #  UpdateReplacePolicy: "Delete"
+  #  Type: "AWS::EC2::Route"
+  #  DeletionPolicy: "Delete"
+  #  Properties:
+  #   RouteTableId:
+  #    Ref: "EC2RouteTableXXXX"
+  #   DestinationCidrBlock:
+  #    Fn::GetAtt:
+  #    - "EC2VPCXXXX"
+  #    - "CidrBlock"
+  #   GatewayId: "local"
+  #   VpcEndpointId: "local"
+
+  EC2DHCPOptionsXXXX:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::DHCPOptions"
+    DeletionPolicy: "Delete"
+    Properties:
+      DomainName: "ap-northeast-1.compute.internal"
+      DomainNameServers:
+      - "AmazonProvidedDNS"
+      Tags:
+      - Value: "default"
+        Key: "Name"
+
+  EC2SubnetXXXX:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Subnet"
+    DeletionPolicy: "Delete"
+    Properties:
+      VpcId:
+        Ref: "EC2VPCXXXX"
+      MapPublicIpOnLaunch: false
+      EnableDns64: false
+      AvailabilityZoneId: "apne1-az2"
+      PrivateDnsNameOptionsOnLaunch:
+        EnableResourceNameDnsARecord: false
+        HostnameType: "ip-name"
+        EnableResourceNameDnsAAAARecord: false
+      CidrBlock: "10.0.1.0/24"
+      Ipv6Native: false
+      Tags:
+      - Value: "iacgenerator"
+        Key: "Name"
+
+  EC2SecurityGroupXXXX:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::SecurityGroup"
+    DeletionPolicy: "Delete"
+    Properties:
+      GroupDescription: "Managed by Terraform"
+      GroupName: "iacgenerator"
+      VpcId:
+        Ref: "EC2VPCXXXX"
+      SecurityGroupIngress:
+      - CidrIp: "XXX.XXX.XXX.XXX/32"
+        IpProtocol: "tcp"
+        FromPort: 22
+        ToPort: 22
+      Tags:
+      - Value: "iacgenerator"
+        Key: "Name"
+
+  # EC2SecurityGroupXXXX:
+  #  UpdateReplacePolicy: "Delete"
+  #  Type: "AWS::EC2::SecurityGroup"
+  #  DeletionPolicy: "Delete"
+  #  Properties:
+  #   GroupDescription: "default VPC security group"
+  #   GroupName: "default"
+  #   VpcId:
+  #    Ref: "EC2VPCXXXX"
+  #   SecurityGroupIngress:
+  #   - IpProtocol: "-1"
+  #    FromPort: -1
+  #    SourceSecurityGroupId:
+  #     Fn::GetAtt:
+  #     - "EC2VPCXXXX"
+  #     - "DefaultSecurityGroup"
+  #    ToPort: -1
+  #    SourceSecurityGroupOwnerId: "XXXX"
+  #   SecurityGroupEgress:
+  #   - CidrIp: "0.0.0.0/0"
+  #    IpProtocol: "-1"
+  #    FromPort: -1
+  #    ToPort: -1
+
+  EC2VPCDHCPOptionsAssociationXXXX:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::VPCDHCPOptionsAssociation"
+    DeletionPolicy: "Delete"
+    Properties:
+      VpcId:
+        Ref: "EC2VPCXXXX"
+      DhcpOptionsId:
+        Ref: "EC2DHCPOptionsXXXX"
+
+  # EC2VolumeXXXX:
+  #  UpdateReplacePolicy: "Delete"
+  #  Type: "AWS::EC2::Volume"
+  #  DeletionPolicy: "Delete"
+  #  Properties:
+  #   MultiAttachEnabled: false
+  #   SnapshotId: "snap-048737098b03c974c"
+  #   VolumeType: "gp3"
+  #   Encrypted: false
+  #   Size: 8
+  #   AutoEnableIO: true
+  #   AvailabilityZone: "ap-northeast-1d"
+  #   Throughput: 125
+  #   Iops: 3000
+  #   Tags: []
+
+  # EC2NetworkAclXXXX:
+  #   UpdateReplacePolicy: "Delete"
+  #   Type: "AWS::EC2::NetworkAcl"
+  #   DeletionPolicy: "Delete"
+  #   Properties:
+  #     VpcId:
+  #       Ref: "EC2VPCXXXX"
+  #     Tags: []
+
+  # Route53ResolverResolverRuleAssociationXXXX:
+  #  UpdateReplacePolicy: "Delete"
+  #  Type: "AWS::Route53Resolver::ResolverRuleAssociation"
+  #  DeletionPolicy: "Delete"
+  #  Properties:
+  #   VPCId:
+  #    Ref: "EC2VPCXXXX"
+  #   ResolverRuleId: "rslvr-autodefined-rr-internet-resolver"
+  #   Name: "System Rule Association"
+
+  EC2VPCXXXX:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::VPC"
+    DeletionPolicy: "Delete"
+    Properties:
+      CidrBlock: "10.0.0.0/16"
+      EnableDnsSupport: true
+      InstanceTenancy: "default"
+      EnableDnsHostnames: false
+      Tags:
+      - Value: "iacgenerator"
+        Key: "Name"
+
+  EC2RouteTableXXXX:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::RouteTable"
+    DeletionPolicy: "Delete"
+    Properties:
+      VpcId:
+        Ref: "EC2VPCXXXX"
+      Tags:
+      - Value: "iacgenerator"
+        Key: "Name"
+
+  EC2SubnetRouteTableAssociationXXXX:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    DeletionPolicy: "Delete"
+    Properties:
+      RouteTableId:
+        Ref: "EC2RouteTableXXXX"
+      SubnetId:
+        Ref: "EC2SubnetXXXX"
+
+  # EC2NetworkInterfaceXXXX:
+  #   UpdateReplacePolicy: "Delete"
+  #   Type: "AWS::EC2::NetworkInterface"
+  #   DeletionPolicy: "Delete"
+  #   Properties:
+  #     Description: ""
+  #     # PrivateIpAddress: "10.0.1.167"
+  #     PrivateIpAddresses:
+  #     - PrivateIpAddress: "10.0.1.167"
+  #       Primary: true
+  #     SecondaryPrivateIpAddressCount: 0
+  #     Ipv6PrefixCount: 0
+  #     Ipv4Prefixes: []
+  #     Ipv4PrefixCount: 0
+  #     GroupSet:
+  #       - Ref: "EC2SecurityGroupXXXX" # - "sg-XXXX"
+  #     Ipv6Prefixes: []
+  #     SubnetId:
+  #       Ref: "EC2SubnetXXXX"
+  #     SourceDestCheck: true
+  #     InterfaceType: "interface"
+  #     Tags: []
+
+  # IGWをVPCにアタッチ
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref EC2VPCXXXX
+      InternetGatewayId: !Ref EC2InternetGatewayXXXX
